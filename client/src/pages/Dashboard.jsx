@@ -1,173 +1,77 @@
-import { useState, useEffect } from 'react';
-import { useUser } from '@insforge/react';
-import { insforge } from '../lib/insforge';
-import { LogOut, User, Compass, MessageSquare, BookMarked } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Compass, MessageSquare, BookMarked, Sparkles } from 'lucide-react';
+import { useUser } from '@insforge/react';
 
 export default function Dashboard() {
-  const { user } = useUser();
   const navigate = useNavigate();
-  const [roadmaps, setRoadmaps] = useState([]);
-  const [loadingRoadmaps, setLoadingRoadmaps] = useState(true);
+  const { user, isLoaded } = useUser();
 
-  const fetchRoadmaps = async () => {
-    try {
-      setLoadingRoadmaps(true);
-      const { data, error } = await insforge.database
-        .from('roadmaps')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-        
-      if (error) throw error;
-      setRoadmaps(data || []);
-    } catch (err) {
-      console.error('Failed to fetch roadmaps', err);
-    } finally {
-      setLoadingRoadmaps(false);
-    }
-  };
-
-  useEffect(() => {
-    if (user) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      fetchRoadmaps();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
-
-  const handleLogout = async () => {
-    await insforge.auth.signOut();
-    navigate('/login');
-  };
+  if (!isLoaded) return null; // Let the layout or ProtectedRoute handle initial load
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
-      {/* Top Navbar */}
-      <nav className="border-b border-white/10 bg-black/50 backdrop-blur-xl sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-2">
-              <Compass className="w-6 h-6 text-[#00d4ff]" />
-              <span className="font-bold text-xl tracking-tight">TruthMentor</span>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-gray-300">
-                <User className="w-4 h-4" />
-                <span className="text-sm font-medium">{user?.profile?.full_name || user?.email}</span>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
-                title="Logout"
-              >
-                <LogOut className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
+    <div className="flex flex-col items-center justify-center min-h-full p-8 relative">
+      {/* Background glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#00d4ff] rounded-full blur-[200px] opacity-[0.03] pointer-events-none"></div>
+      
+      <div className="max-w-4xl w-full flex flex-col items-center text-center z-10 mt-12 mb-16">
+        <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mb-6">
+          <Sparkles className="w-8 h-8 text-[#00d4ff]" />
         </div>
-      </nav>
+        <h1 className="text-4xl font-extrabold tracking-tight mb-4">
+          Welcome to TruthMentor, {user?.profile?.full_name?.split(' ')[0] || 'there'}
+        </h1>
+        <p className="text-xl text-gray-400 max-w-2xl">
+          Stop getting sugarcoated advice. Get a brutally honest, data-driven roadmap to your dream career. What would you like to do today?
+        </p>
+      </div>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-10">
-          <h1 className="text-3xl font-bold mb-2">Welcome back.</h1>
-          <p className="text-gray-400">Ready to face the reality of your career?</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Card 1: New Roadmap */}
-          <div className="col-span-1 md:col-span-2 group relative bg-gradient-to-br from-[#00d4ff]/10 to-transparent border border-[#00d4ff]/20 rounded-2xl p-8 hover:border-[#00d4ff]/50 transition-all cursor-pointer overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-[#00d4ff] rounded-full blur-[100px] opacity-10 group-hover:opacity-20 transition-opacity"></div>
-            <div className="relative z-10">
-              <Compass className="w-10 h-10 text-[#00d4ff] mb-4" />
-              <h2 className="text-2xl font-bold mb-2">Generate New Roadmap</h2>
-              <p className="text-gray-400 mb-6 max-w-md">
-                Tell the AI where you are and where you want to go. Get a brutally honest, step-by-step path to get there.
-              </p>
-              <button 
-                onClick={() => navigate('/roadmap/new')}
-                className="bg-[#00d4ff] text-black font-bold px-6 py-2.5 rounded-xl hover:bg-[#0099cc] transition-colors"
-              >
-                Start Planning
-              </button>
-            </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl w-full z-10">
+        
+        {/* Generate Roadmap Card */}
+        <div 
+          onClick={() => navigate('/roadmap/new')}
+          className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-[#00d4ff]/40 transition-all cursor-pointer group flex flex-col items-center text-center h-full"
+        >
+          <div className="w-12 h-12 bg-[#00d4ff]/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <Compass className="w-6 h-6 text-[#00d4ff]" />
           </div>
-
-          {/* Card 2: AI Mentor */}
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-colors cursor-pointer flex flex-col justify-between">
-            <div>
-              <MessageSquare className="w-8 h-8 text-[#8a2be2] mb-4" />
-              <h3 className="text-xl font-bold mb-2">Talk to Mentor</h3>
-              <p className="text-sm text-gray-400">
-                Stuck on a problem? Need resume advice? Chat directly with the AI mentor.
-              </p>
-            </div>
-            <button className="w-full mt-6 py-2 border border-white/20 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors">
-              Open Chat
-            </button>
-          </div>
-
-          {/* Card 3: Saved Resources */}
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-colors cursor-pointer flex flex-col justify-between">
-            <div>
-              <BookMarked className="w-8 h-8 text-yellow-500 mb-4" />
-              <h3 className="text-xl font-bold mb-2">Bookmarks</h3>
-              <p className="text-sm text-gray-400">
-                Access your saved tutorials, courses, and articles.
-              </p>
-            </div>
-            <button className="w-full mt-6 py-2 border border-white/20 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors">
-              View Resources
-            </button>
-          </div>
+          <h3 className="text-lg font-bold mb-2">Create New Roadmap</h3>
+          <p className="text-sm text-gray-400 mb-6 flex-1">
+            Tell the AI where you are and where you want to go. Get a step-by-step path to get there.
+          </p>
+          <span className="text-sm font-bold text-[#00d4ff] group-hover:underline">Start Planning →</span>
         </div>
 
-        {/* Saved Roadmaps Section */}
-        <div className="mt-16">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold">Your Career Paths</h2>
+        {/* AI Mentor Card (Upcoming) */}
+        <div 
+          className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-[#8a2be2]/40 transition-all cursor-pointer group flex flex-col items-center text-center h-full relative overflow-hidden"
+        >
+          <div className="absolute top-2 right-2 px-2 py-1 bg-black/50 text-[#8a2be2] text-[10px] font-bold uppercase rounded-md border border-[#8a2be2]/30">Coming Soon</div>
+          <div className="w-12 h-12 bg-[#8a2be2]/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <MessageSquare className="w-6 h-6 text-[#8a2be2]" />
           </div>
-          
-          {loadingRoadmaps ? (
-            <div className="flex justify-center py-12">
-              <div className="w-8 h-8 border-4 border-t-[#00d4ff] border-[#00d4ff]/20 rounded-full animate-spin"></div>
-            </div>
-          ) : roadmaps.length === 0 ? (
-            <div className="text-center py-12 bg-white/5 border border-white/10 rounded-2xl">
-              <Compass className="w-12 h-12 text-gray-500 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-white mb-2">No roadmaps yet</h3>
-              <p className="text-gray-400">Generate your first career roadmap to get started.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {roadmaps.map(roadmap => (
-                <div 
-                  key={roadmap.id}
-                  onClick={() => navigate(`/roadmap/${roadmap.id}`)}
-                  className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-[#00d4ff]/30 transition-all cursor-pointer group"
-                >
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="p-2 bg-[#00d4ff]/10 rounded-lg group-hover:scale-110 transition-transform">
-                      <Compass className="w-6 h-6 text-[#00d4ff]" />
-                    </div>
-                    <span className="text-xs text-gray-500 font-medium bg-black/50 px-2 py-1 rounded-md">
-                      {new Date(roadmap.created_at).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <h3 className="text-xl font-bold mb-1 truncate">{roadmap.title}</h3>
-                  <p className="text-sm text-[#00d4ff] font-medium truncate mb-4">{roadmap.target_role}</p>
-                  <div className="flex items-center justify-between text-xs text-gray-400 font-medium">
-                    <span>View Journey</span>
-                    <span className="group-hover:translate-x-1 transition-transform">→</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+          <h3 className="text-lg font-bold mb-2">Talk to AI Mentor</h3>
+          <p className="text-sm text-gray-400 mb-6 flex-1">
+            Stuck on a problem? Need resume advice? Have a brutally honest conversation with the mentor.
+          </p>
+          <span className="text-sm font-bold text-gray-500">Available in Phase 3</span>
         </div>
-      </main>
+
+        {/* Bookmarks Card */}
+        <div 
+          className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-yellow-500/40 transition-all cursor-pointer group flex flex-col items-center text-center h-full"
+        >
+          <div className="w-12 h-12 bg-yellow-500/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <BookMarked className="w-6 h-6 text-yellow-500" />
+          </div>
+          <h3 className="text-lg font-bold mb-2">Saved Resources</h3>
+          <p className="text-sm text-gray-400 mb-6 flex-1">
+            Access your bookmarked tutorials, courses, and articles from your generated roadmaps.
+          </p>
+          <span className="text-sm font-bold text-gray-500">Upcoming Feature</span>
+        </div>
+
+      </div>
     </div>
   );
 }

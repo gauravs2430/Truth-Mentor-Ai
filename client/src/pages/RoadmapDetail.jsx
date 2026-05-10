@@ -69,7 +69,7 @@ export default function RoadmapDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center text-white">
+      <div className="min-h-full flex flex-col items-center justify-center text-white p-12">
         <Loader2 className="w-10 h-10 animate-spin text-[#00d4ff] mb-4" />
         <p className="text-gray-400">Loading your path...</p>
       </div>
@@ -78,7 +78,7 @@ export default function RoadmapDetail() {
 
   if (error || !roadmap) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center text-white p-4">
+      <div className="min-h-full flex flex-col items-center justify-center text-white p-12">
         <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-8 max-w-md w-full text-center">
           <p className="text-red-400 mb-6">{error || 'Roadmap not found.'}</p>
           <button 
@@ -97,7 +97,7 @@ export default function RoadmapDetail() {
   const progress = totalSteps === 0 ? 0 : Math.round((completedSteps / totalSteps) * 100);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white py-12 px-4 sm:px-6 lg:px-8 relative">
+    <div className="min-h-full text-white py-12 px-4 sm:px-6 lg:px-8 relative">
       {/* Background elements */}
       <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-[#00d4ff] rounded-full blur-[150px] opacity-5 pointer-events-none"></div>
 

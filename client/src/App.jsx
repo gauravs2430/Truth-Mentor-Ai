@@ -10,6 +10,8 @@ import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import GenerateRoadmap from './pages/GenerateRoadmap';
 import RoadmapDetail from './pages/RoadmapDetail';
+import DashboardLayout from './components/layout/DashboardLayout';
+import Chat from './pages/Chat';
 
 // A wrapper to protect routes that require authentication
 const ProtectedRoute = ({children}) => {
@@ -47,7 +49,7 @@ const ProtectedRoute = ({children}) => {
     )
   }
 
-  return children;
+  return <DashboardLayout>{children}</DashboardLayout>;
 };
  
 // A wrapper to prevent logged-in users from seeing login/signup
@@ -108,6 +110,11 @@ function App() {
             <Route path="/roadmap/:id" element={
               <ProtectedRoute>
                 <RoadmapDetail />
+              </ProtectedRoute>
+            } />
+            <Route path="/chat/:id" element={
+              <ProtectedRoute>
+                <Chat />
               </ProtectedRoute>
             } />
             

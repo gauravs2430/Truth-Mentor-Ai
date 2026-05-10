@@ -32,9 +32,9 @@ export default function Login() {
   recoverOAuthSession();
 }, [navigate]);
 
-  console.log("LOGIN PAGE USER:", user);
-  console.log("LOGIN PAGE IS LOADED:", isLoaded);
-  console.log("CURRENT URL:", window.location.href);
+  // console.log("LOGIN PAGE USER:", user);
+  // console.log("LOGIN PAGE IS LOADED:", isLoaded);
+  // console.log("CURRENT URL:", window.location.href);
 
   const handleLogin = async (e) => {
     e.preventDefault();

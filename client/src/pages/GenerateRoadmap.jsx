@@ -6,7 +6,7 @@ import { Compass, Briefcase, Target, Zap, Loader2, Code2, Clock } from 'lucide-r
 
 export default function GenerateRoadmap() {
   const navigate = useNavigate();
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [status, setStatus] = useState('');
@@ -41,6 +41,12 @@ export default function GenerateRoadmap() {
     setLoading(true);
     setError(null);
     setStatus('Analyzing your current profile...');
+
+    if (!user) {
+      setError("User session lost. Please refresh or login again.");
+      setLoading(false);
+      return;
+    }
 
     try {
       // 1. Update Profile (Optional but good for memory)
@@ -140,8 +146,16 @@ Generate a step-by-step roadmap for me.`;
     }
   };
 
+  if (!isLoaded) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-[#00d4ff]" />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="min-h-full text-white py-12 px-4 sm:px-6 lg:px-8 relative overflow-x-hidden">
       {/* Background glow */}
       <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-[#00d4ff] rounded-full blur-[150px] opacity-10"></div>
       

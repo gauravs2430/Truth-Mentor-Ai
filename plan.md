@@ -997,20 +997,6 @@ VITE_API_URL=https://your-backend.railway.app
 
 ---
 
-## 📝 Summary: What Makes This Resume-Worthy
-
-When this is done, you can say:
-
-> *"Built a full-stack AI career mentoring platform using React, Node.js, PostgreSQL (InsForge), and Google Gemini API with LangChain. Features include JWT + Google OAuth authentication, personalized AI-generated roadmaps with progress tracking, a streaming AI chat interface with conversation memory, and Redis caching for API optimization. Deployed on Vercel + Railway with a CI/CD pipeline via GitHub Actions."*
-
-That is a project that will make interviewers stop and ask follow-up questions.
-
----
-
-*Plan created: May 2026 | Status: 🚧 In Progress*
-
----
-
 ## 📖 Development Log & Major Milestones
 
 ### May 2026 - Phase 1 & 2 Completed

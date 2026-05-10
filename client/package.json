@@ -12,9 +12,11 @@
   "dependencies": {
     "@insforge/react": "^1.1.8",
     "@insforge/sdk": "^1.2.7",
+    "@tailwindcss/typography": "^0.5.19",
     "lucide-react": "^1.14.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "^7.15.0"
   },
   "devDependencies": {
