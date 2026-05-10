@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { InsforgeProvider, useUser } from '@insforge/react';
+import { InsforgeProvider, useUser, useInsforge } from '@insforge/react';
 import { insforge } from './lib/insforge';
 
 import Login from './pages/Login';
@@ -31,7 +31,11 @@ const ProtectedRoute = ({ children }) => {
 const AuthRoute = ({ children }) => {
   const { user, isLoaded } = useUser();
   
-  if (!isLoaded) return null;
+  if (!isLoaded) return (
+    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+      <div className="w-8 h-8 border-4 border-t-[#00d4ff] border-[#00d4ff]/20 rounded-full animate-spin"></div>
+    </div>
+  );
   if (user) return <Navigate to="/dashboard" replace />;
   
   return children;
@@ -39,7 +43,7 @@ const AuthRoute = ({ children }) => {
 
 function App() {
   return (
-    <InsforgeProvider client={insforge}>
+    <InsforgeProvider client={insforge} afterSignInUrl="/dashboard">
       <BrowserRouter>
         <div className="min-h-screen bg-[#0a0a0a] text-white font-sans selection:bg-[#00d4ff]/30">
           <Routes>

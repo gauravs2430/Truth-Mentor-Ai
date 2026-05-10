@@ -101,10 +101,18 @@ We treat this README as a living document. Here is our phase-by-phase execution:
   - Migrated away from a basic Express server.
   - Initialized the InsForge project and architected a 9-table PostgreSQL schema.
   - Built the React frontend, configured Tailwind, and established a secure Authentication flow with Protected Routes.
-- **Phase 2 (Roadmaps) - *Upcoming*:** 
-  - Implementing the AI-to-JSON parsing pipeline to generate the visual learning paths.
+- **Phase 2 (Roadmaps) - *Completed*:** 
+  - Implemented the AI-to-JSON parsing pipeline to generate visual learning paths.
+  - Built `RoadmapDetail` for tracking step-by-step progress with interactive completion toggles.
+  - Updated the User Dashboard to fetch and display previously generated roadmaps.
 - **Phase 3 (AI Chat) - *Upcoming*:** 
   - Integrating LangChain-style memory so the AI can recall past chat sessions.
+
+## 🐛 Recent Bug Fixes
+
+- **Authentication Race Condition:** Fixed an issue where manual React Router navigation was firing before the `@insforge/react` context synced the session, causing users to bounce back to the login screen.
+- **Google OAuth Redirection:** Corrected the `signInWithOAuth` syntax required by the `@insforge/sdk` (moving `redirectTo` to the top level) to resolve `400 Bad Request` errors.
+- **State Synchronization:** Ensured explicit logins happen via `useInsforge` context hooks rather than raw SDK calls so the frontend state updates reliably.
 
 ---
 

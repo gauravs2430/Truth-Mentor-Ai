@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useInsforge } from '@insforge/react';
 import { insforge } from '../lib/insforge';
 import { Mail, Lock, User, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
 
 export default function Signup() {
   const navigate = useNavigate();
+  const { signIn } = useInsforge();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -48,15 +50,16 @@ export default function Signup() {
           }
         ]);
         
-      if (profileError && profileError.code !== '23505') { // Ignore duplicate key if trigger already made it
+      if (profileError && profileError.code !== '23505') { 
         console.error("Profile creation error:", profileError);
       }
-      
-      // Auto sign in after signup (InsForge usually does this automatically if email verification is off)
-      navigate('/dashboard');
+
+      // Use useInsforge's signIn to properly update React context
+      await signIn(email, password);
+      navigate('/dashboard', { replace: true });
+    } else {
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
   return (
