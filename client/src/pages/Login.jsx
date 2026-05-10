@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useInsforge, useUser } from '@insforge/react';
 import { Mail, Lock, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
+import { insforge } from '../lib/insforge';
+
 
 export default function Login() {
 
@@ -13,6 +15,22 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { user, isLoaded } = useUser();
+
+  useEffect(() => {
+  async function recoverOAuthSession() {
+    // console.log("Trying to recover OAuth session...");
+
+    const result = await insforge.auth.getCurrentUser();
+
+    console.log("getCurrentUser result:", result);
+
+    if (result?.data?.user) {
+      navigate('/dashboard', { replace: true });
+    }
+  }
+
+  recoverOAuthSession();
+}, [navigate]);
 
   console.log("LOGIN PAGE USER:", user);
   console.log("LOGIN PAGE IS LOADED:", isLoaded);
@@ -33,8 +51,6 @@ export default function Login() {
   };
 
   const handleGoogleLogin = async () => {
-    // Redirect back to /login instead of /dashboard. 
-    // This prevents ProtectedRoute from destroying the OAuth hash fragment before the SDK can parse it!
     await loginWithOAuth('google', `${window.location.origin}/login`);
   };
 
