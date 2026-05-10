@@ -143,11 +143,13 @@ console.log(completion.choices[0].message.content);
 
 ## ⏭️ 7. Next Steps Log
 
-*Last updated: Phase 1 (Database Initialization)*
+*Last updated: Phase 2 (Auth & Roadmaps Completed)*
 
 1. [x] Log into InsForge CLI
 2. [x] Link Project
 3. [x] Create Initial Database Schema (Tables, RLS, Seed Data)
 4. [x] Apply Migration to Cloud Database
-5. [ ] (Up Next) Initialize the new frontend structure (React/Vite).
-6. [ ] (Up Next) Install `@insforge/sdk` and set up authentication UI.
+5. [x] Initialize the new frontend structure (React/Vite).
+6. [x] Install `@insforge/sdk` and set up authentication UI with secure protected routes.
+7. [x] Implement AI Roadmap generation (JSON streaming) and interactive progress tracking.
+8. [ ] (Up Next) Begin Phase 3: AI Chat feature with conversation memory and persistent session history.

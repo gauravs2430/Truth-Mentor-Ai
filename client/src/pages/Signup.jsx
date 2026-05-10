@@ -1,15 +1,22 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useInsforge } from '@insforge/react';
-import { insforge } from '../lib/insforge';
-import { Mail, Lock, User, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useInsforge } from "@insforge/react";
+import { insforge } from "../lib/insforge";
+import {
+  Mail,
+  Lock,
+  User,
+  ArrowRight,
+  Loader2,
+  AlertCircle,
+} from "lucide-react";
 
 export default function Signup() {
   const navigate = useNavigate();
   const { signIn } = useInsforge();
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -25,8 +32,8 @@ export default function Signup() {
       options: {
         data: {
           full_name: fullName,
-        }
-      }
+        },
+      },
     });
 
     if (authError) {
@@ -40,17 +47,17 @@ export default function Signup() {
     // Since we created the profiles table manually, we insert the profile row here.
     if (authData.user) {
       const { error: profileError } = await insforge.database
-        .from('profiles')
+        .from("profiles")
         .insert([
           {
             id: authData.user.id,
             full_name: fullName,
-            experience: 'beginner',
-            mentor_tone: 'honest'
-          }
+            experience: "beginner",
+            mentor_tone: "honest",
+          },
         ]);
-        
-      if (profileError && profileError.code !== '23505') { 
+
+      if (profileError && profileError.code !== "23505") {
         console.error("Profile creation error:", profileError);
       }
 
@@ -65,7 +72,10 @@ export default function Signup() {
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
       {/* Dynamic Background */}
       <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-[#ff0055] rounded-full blur-[150px] opacity-10 animate-pulse"></div>
-      <div className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#00d4ff] rounded-full blur-[150px] opacity-10 animate-pulse" style={{ animationDelay: '2s' }}></div>
+      <div
+        className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#00d4ff] rounded-full blur-[150px] opacity-10 animate-pulse"
+        style={{ animationDelay: "2s" }}
+      ></div>
 
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
@@ -85,7 +95,9 @@ export default function Signup() {
 
           <form onSubmit={handleSignup} className="space-y-5">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-300">Full Name</label>
+              <label className="text-sm font-medium text-gray-300">
+                Full Name
+              </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <User className="h-5 w-5 text-gray-500" />
@@ -119,7 +131,9 @@ export default function Signup() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-300">Password</label>
+              <label className="text-sm font-medium text-gray-300">
+                Password
+              </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Lock className="h-5 w-5 text-gray-500" />
@@ -141,15 +155,22 @@ export default function Signup() {
               disabled={loading}
               className="w-full flex items-center justify-center gap-2 py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-gradient-to-r from-[#00d4ff] to-[#0099cc] hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#00d4ff] focus:ring-offset-[#0a0a0a] disabled:opacity-50 disabled:cursor-not-allowed transition-all mt-6"
             >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Create Account'}
+              {loading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                "Create Account"
+              )}
               {!loading && <ArrowRight className="w-4 h-4" />}
             </button>
           </form>
         </div>
 
         <p className="mt-8 text-center text-sm text-gray-400">
-          Already have an account?{' '}
-          <Link to="/login" className="font-semibold text-[#00d4ff] hover:text-white transition-colors">
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="font-semibold text-[#00d4ff] hover:text-white transition-colors"
+          >
             Sign in here
           </Link>
         </p>

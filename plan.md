@@ -253,20 +253,20 @@ Now wire up React to your working API:
 
 ### 🟢 Phase 1 — Foundation (MVP)
 - [x] ~~Basic Gemini query~~ (already exists)
-- [ ] User registration and login (Email/Password)
-- [ ] Google OAuth login
-- [ ] User profile (name, current role, experience level)
-- [ ] Save roadmap to database
-- [ ] View past roadmaps in a history panel
-- [ ] Delete a roadmap
+- [x] User registration and login (Email/Password)
+- [x] Google OAuth login
+- [x] User profile (name, current role, experience level)
+- [x] Save roadmap to database
+- [x] View past roadmaps in a history panel
+- [x] Delete a roadmap
 
 ### 🟡 Phase 2 — Core Features
-- [ ] **Interactive Roadmap UI** — Visual step-by-step roadmap with checkboxes
-- [ ] **Progress Tracker** — Mark steps as complete, see % completion
-- [ ] **Skills Input** — User sets their current skills before querying
+- [x] **Interactive Roadmap UI** — Visual step-by-step roadmap with checkboxes
+- [x] **Progress Tracker** — Mark steps as complete, see % completion
+- [x] **Skills Input** — User sets their current skills before querying
 - [ ] **AI Chat** — Ongoing conversation with the AI mentor (not just one-shot queries)
-- [ ] **Streaming Responses** — Token-by-token output like ChatGPT
-- [ ] **Short/Detailed toggle** — Already exists, improve it
+- [x] **Streaming Responses** — Token-by-token output like ChatGPT
+- [x] **Short/Detailed toggle** — Already exists, improve it
 
 ### 🔴 Phase 3 — Advanced Features
 - [ ] **Skills Gap Analyzer** — User inputs current skills + target role, AI shows the gap

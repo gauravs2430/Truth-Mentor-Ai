@@ -24,3 +24,10 @@ This document tracks current known issues, edge cases, and technical debt in the
 ### 5. Missing Error Boundaries
 - **Issue:** If the database goes down or returns a malformed JSON payload for a roadmap, the React application might crash and show a blank screen instead of a graceful error UI.
 - **Future Fix:** Implement React `<ErrorBoundary>` components around the main application routes, specifically the `RoadmapDetail` and `Dashboard` views.
+
+---
+
+## ✅ Recently Resolved
+
+- **Authentication Race Condition:** Fixed issue where manual React Router navigation fired before `@insforge/react` synced session state, causing redirection loops.
+- **Google OAuth 400 Errors:** Corrected `@insforge/sdk` `signInWithOAuth` syntax (`redirectTo` param at top-level) fixing bad request errors.

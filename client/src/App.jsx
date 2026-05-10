@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { InsforgeProvider, useUser, useInsforge } from '@insforge/react';
+import { InsforgeProvider, useUser} from '@insforge/react';
 import { insforge } from './lib/insforge';
 
 import Login from './pages/Login';
@@ -35,10 +35,11 @@ const AuthRoute = ({ children }) => {
       <div className="w-8 h-8 border-4 border-t-[#00d4ff] border-[#00d4ff]/20 rounded-full animate-spin"></div>
     </div>
   );
-  if (user) {
+  if(user) {
+    return <Navigate to="/dashboard" replace />;
     // Preserve URL parameters if they exist
-    const { search, hash } = window.location;
-    return <Navigate to={`/dashboard${search}${hash}`} replace />;
+    // const { search, hash } = window.location;
+    // return <Navigate to={`/dashboard${search}${hash}`} replace />;
   }
   
   return children;
