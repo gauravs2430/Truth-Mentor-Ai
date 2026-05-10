@@ -12,16 +12,15 @@ import RoadmapDetail from './pages/RoadmapDetail';
 const ProtectedRoute = ({ children }) => {
   const { user, isLoaded } = useUser();
   
-  if (!isLoaded) {
-    return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-t-[#00d4ff] border-[#00d4ff]/20 rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-  
+  if (!isLoaded) return (
+    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+      <div className="w-8 h-8 border-4 border-t-[#00d4ff] border-[#00d4ff]/20 rounded-full animate-spin"></div>
+    </div>
+  );
   if (!user) {
-    return <Navigate to="/login" replace />;
+    // Preserve URL parameters (like OAuth tokens) when redirecting
+    const { search, hash } = window.location;
+    return <Navigate to={`/login${search}${hash}`} replace />;
   }
   
   return children;
@@ -36,7 +35,11 @@ const AuthRoute = ({ children }) => {
       <div className="w-8 h-8 border-4 border-t-[#00d4ff] border-[#00d4ff]/20 rounded-full animate-spin"></div>
     </div>
   );
-  if (user) return <Navigate to="/dashboard" replace />;
+  if (user) {
+    // Preserve URL parameters if they exist
+    const { search, hash } = window.location;
+    return <Navigate to={`/dashboard${search}${hash}`} replace />;
+  }
   
   return children;
 };

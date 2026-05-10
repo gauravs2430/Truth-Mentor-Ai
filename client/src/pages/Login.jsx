@@ -22,13 +22,13 @@ export default function Login() {
 
     if (result && 'error' in result) {
       setError(result.error || 'Login failed. Please try again.');
-    } else {
-      navigate('/dashboard', { replace: true });
     }
   };
 
   const handleGoogleLogin = async () => {
-    await loginWithOAuth('google', window.location.origin + '/dashboard');
+    // Redirect back to /login instead of /dashboard. 
+    // This prevents ProtectedRoute from destroying the OAuth hash fragment before the SDK can parse it!
+    await loginWithOAuth('google', window.location.origin + '/login');
   };
 
   return (

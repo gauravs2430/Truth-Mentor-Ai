@@ -56,7 +56,6 @@ export default function Signup() {
 
       // Use useInsforge's signIn to properly update React context
       await signIn(email, password);
-      navigate('/dashboard', { replace: true });
     } else {
       setLoading(false);
     }
