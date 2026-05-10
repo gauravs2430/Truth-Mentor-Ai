@@ -19,7 +19,6 @@ export default function Login() {
   useEffect(() => {
   async function recoverOAuthSession() {
     // console.log("Trying to recover OAuth session...");
-
     const result = await insforge.auth.getCurrentUser();
 
     console.log("getCurrentUser result:", result);

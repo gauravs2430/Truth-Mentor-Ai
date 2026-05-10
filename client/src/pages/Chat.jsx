@@ -131,7 +131,7 @@ export default function Chat() {
 
       // 3. Call AI Gateway
       const completion = await insforge.ai.chat.completions.create({
-        model: 'anthropic/claude-3.5-sonnet',
+        model: 'openai/gpt-4o-mini',
         messages: [
           { role: 'system', content: HONEST_MENTOR_SYSTEM_PROMPT },
           ...chatHistory,

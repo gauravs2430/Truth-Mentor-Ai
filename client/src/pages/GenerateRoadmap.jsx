@@ -42,7 +42,18 @@ export default function GenerateRoadmap() {
     setError(null);
     setStatus('Analyzing your current profile...');
 
-    if (!user) {
+    const { data, error: userError } = await insforge.auth.getCurrentUser();
+
+    if (userError || !data?.user) {
+      setError("Session expired. Please login again.");
+      setLoading(false);
+      navigate("/login");
+      return;
+    }
+
+    const currentUser = data.user;
+
+    if (!currentUser) {
       setError("User session lost. Please refresh or login again.");
       setLoading(false);
       return;
@@ -54,7 +65,7 @@ export default function GenerateRoadmap() {
         current_position: formData.current_position,
         target_role: formData.target_role,
         experience: formData.experience
-      }).eq('id', user.id);
+      }).eq('id', currentUser.id);
 
       setStatus('Consulting the brutal truth AI mentor...');
 
@@ -84,7 +95,7 @@ Generate a step-by-step roadmap for me.`;
 
       // 3. Call InsForge AI Gateway
       const completion = await insforge.ai.chat.completions.create({
-        model: 'anthropic/claude-3.5-sonnet',
+        model: 'openai/gpt-4o-mini',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userMessage }
@@ -97,7 +108,7 @@ Generate a step-by-step roadmap for me.`;
       let responseText = completion.choices[0].message.content;
       // Cleanup markdown code blocks if the AI returns them
       responseText = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
-      
+
       let roadmapData;
       try {
         roadmapData = JSON.parse(responseText);
@@ -111,9 +122,10 @@ Generate a step-by-step roadmap for me.`;
       const { data: roadmapInsert, error: roadmapError } = await insforge.database
         .from('roadmaps')
         .insert([{
-          user_id: user.id,
+          user_id: currentUser.id,
           title: roadmapData.title,
           target_role: roadmapData.target_role,
+          query: userMessage, // Added missing required field
           is_public: false
         }])
         .select()
@@ -136,7 +148,7 @@ Generate a step-by-step roadmap for me.`;
       if (stepsError) throw stepsError;
 
       setStatus('Done!');
-      navigate(`/roadmap/${roadmapInsert.id}`); 
+      navigate(`/roadmap/${roadmapInsert.id}`);
 
     } catch (err) {
       console.error(err);
@@ -158,7 +170,7 @@ Generate a step-by-step roadmap for me.`;
     <div className="min-h-full text-white py-12 px-4 sm:px-6 lg:px-8 relative overflow-x-hidden">
       {/* Background glow */}
       <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-[#00d4ff] rounded-full blur-[150px] opacity-10"></div>
-      
+
       <div className="max-w-3xl mx-auto relative z-10">
         <div className="mb-10 text-center">
           <Compass className="w-12 h-12 text-[#00d4ff] mx-auto mb-4" />

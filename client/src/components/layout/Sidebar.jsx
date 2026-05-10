@@ -51,10 +51,20 @@ export default function Sidebar() {
   };
 
   const handleNewChat = async () => {
+    let currentUser = user;
+    if (!currentUser) {
+      const { data } = await insforge.auth.getCurrentUser();
+      currentUser = data?.user;
+    }
+
+    if (!currentUser) {
+      alert("Session not ready. Please refresh the page.");
+      return;
+    }
     try {
       const { data, error } = await insforge.database
         .from('chat_sessions')
-        .insert([{ user_id: user.id, title: 'New Conversation' }])
+        .insert([{ user_id: currentUser.id, title: 'New Conversation' }])
         .select()
         .single();
       

@@ -27,9 +27,16 @@ This document tracks current known issues, edge cases, and technical debt in the
 
 ---
 
+---
+
 ## ✅ Recently Resolved
 
-### The Google OAuth Redirect Bug (A 4-Hour Debugging Story)
+### 1. Roadmap Save Constraint (PostgreSQL Error 23502)
+- **Issue:** Generating a roadmap would fail with: `null value in column "query" of relation "roadmaps" violates not-null constraint`.
+- **Cause:** The database schema required a `query` field (to store the user's original prompt), but the frontend code was not providing it during insertion.
+- **Fix:** Updated `GenerateRoadmap.jsx` to include the `query` field in the `insforge.database.insert()` call.
+
+### 2. The Google OAuth Redirect Bug (A 4-Hour Debugging Story)
 
 Spent HOURS debugging a Google OAuth issue while building my project “TruthMentor” using InsForge + React Router 😭
 Thought I’d share the issue and fix because someone else will probably run into this too.
