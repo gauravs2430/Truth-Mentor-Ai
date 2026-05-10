@@ -1008,3 +1008,33 @@ That is a project that will make interviewers stop and ask follow-up questions.
 ---
 
 *Plan created: May 2026 | Status: 🚧 In Progress*
+
+---
+
+## 📖 Development Log & Major Milestones
+
+### May 2026 - Phase 1 & 2 Completed
+
+We successfully initialized the project using InsForge as a serverless backend.
+- **Backend Infrastructure:** Designed and migrated a robust 9-table schema to PostgreSQL. Configured Row Level Security (RLS) to enforce data privacy.
+- **Roadmap Generation:** Hooked up the AI streaming pipeline to generate JSON-structured career paths. Implemented interactive tracking so users can check off completed steps.
+
+### Critical Fix: The Google OAuth Redirect Bug
+During the implementation of Phase 1, we encountered a severe race condition with Google OAuth and React Router.
+
+**The problem:**
+- Email/password auth worked perfectly.
+- Google OAuth login got stuck on the login page.
+- After signing in with Google, `/login#access_token=xyz` would briefly appear and then immediately become `/login` while `useUser()` still returned `null`.
+- The app thought "No user logged in" and stayed on the login screen forever.
+
+**The debugging journey:**
+At first, it looked like an OAuth callback URL issue, cookie problem, or backend misconfiguration. However, running `await insforge.auth.getCurrentUser()` proved the login was succeeding! The issue was purely **Frontend auth state synchronization after OAuth redirect.** `useUser()` was lagging behind and not updating immediately after the redirect.
+
+**The Solution:**
+1. Let OAuth redirect back to `/login` instead of directly to `/dashboard`.
+2. Preserve the OAuth URL hash/query while redirecting.
+3. Manually recover/check the session using `insforge.auth.getCurrentUser()`.
+4. Navigate to the dashboard only AFTER session recovery succeeds.
+
+*Key Lesson:* DO NOT accidentally destroy the OAuth hash/query params too early. If your router redirects too early and turns it into `/login` before the SDK parses it, the login session is lost.

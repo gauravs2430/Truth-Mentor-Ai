@@ -97,23 +97,35 @@ This application utilizes a modern, serverless-first architecture optimized for 
 
 We treat this README as a living document. Here is our phase-by-phase execution:
 
-- **Phase 1 (Foundation):** 
-  - Migrated away from a basic Express server.
+- **Phase 1 (Foundation - *Completed*):** 
+  - Migrated away from a basic Express server to a modern serverless backend.
   - Initialized the InsForge project and architected a 9-table PostgreSQL schema.
-  - Built the React frontend, configured Tailwind, and established a secure Authentication flow with Protected Routes.
-- **Phase 2 (Roadmaps) - *Completed*:** 
+  - Built the React frontend, configured Tailwind, and established a secure Authentication flow (Email/Password & Google OAuth).
+  - Architected Protected Routes and Auth Routes to correctly manage user sessions.
+  - *Major Milestone:* Resolved severe React Router vs. SDK state synchronization issues (detailed below).
+- **Phase 2 (Roadmaps - *Completed*):** 
   - Implemented the AI-to-JSON parsing pipeline to generate visual learning paths.
   - Built `RoadmapDetail` for tracking step-by-step progress with interactive completion toggles.
   - Updated the User Dashboard to fetch and display previously generated roadmaps.
-- **Phase 3 (AI Chat) - *Upcoming*:** 
+- **Phase 3 (AI Chat - *Upcoming*):** 
   - Integrating LangChain-style memory so the AI can recall past chat sessions.
+
+---
 
 ## 🐛 Recent Bug Fixes
 
-- **Authentication Race Condition:** Fixed an issue where manual React Router navigation was firing before the `@insforge/react` context synced the session, causing users to bounce back to the login screen.
-- **Google OAuth Redirection:** Corrected the `signInWithOAuth` syntax required by the `@insforge/sdk` (moving `redirectTo` to the top level) to resolve `400 Bad Request` errors.
-- **State Synchronization:** Ensured explicit logins happen via `useInsforge` context hooks rather than raw SDK calls so the frontend state updates reliably.
+### The Google OAuth Redirect Bug (A 4-Hour Debugging Story)
+We encountered a major issue where Google OAuth login would succeed, but the app got stuck on the login page. The URL `/login#access_token=xyz` would appear briefly, then immediately become `/login`, while `useUser()` still returned `null`.
 
+**The root cause:** The frontend auth state was not synchronized before React Router redirected. The SDK hadn't parsed the hash fragment yet.
+
+**The Fix:**
+1. Modified the OAuth redirect to point back to `/login` instead of directly to `/dashboard`.
+2. Preserved the OAuth URL hash/query while redirecting.
+3. Implemented a session recovery check in `ProtectedRoute.jsx` using `insforge.auth.getCurrentUser()`.
+4. Ensured navigation to the dashboard only occurred **after** session recovery succeeded.
+
+*Takeaway:* Never destroy OAuth hash/query parameters too early! Let the SDK parse them before triggering client-side redirects.
 ---
 
 ## 🗄️ Database Schema & Security

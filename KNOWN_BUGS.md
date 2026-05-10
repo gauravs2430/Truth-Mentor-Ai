@@ -29,5 +29,56 @@ This document tracks current known issues, edge cases, and technical debt in the
 
 ## ✅ Recently Resolved
 
-- **Authentication Race Condition:** Fixed issue where manual React Router navigation fired before `@insforge/react` synced session state, causing redirection loops.
-- **Google OAuth 400 Errors:** Corrected `@insforge/sdk` `signInWithOAuth` syntax (`redirectTo` param at top-level) fixing bad request errors.
+### The Google OAuth Redirect Bug (A 4-Hour Debugging Story)
+
+Spent HOURS debugging a Google OAuth issue while building my project “TruthMentor” using InsForge + React Router 😭
+Thought I’d share the issue and fix because someone else will probably run into this too.
+
+**The problem:**
+✅ Email/password auth worked perfectly
+❌ Google OAuth login got stuck on the login page
+
+After signing in with Google:
+`/login#access_token=xyz` would briefly appear… and then immediately become `/login` while `useUser()` still returned `null`.
+So the app thought: `"No user logged in"` and stayed on the login screen forever.
+
+At first I thought it was:
+* OAuth callback URL issue
+* Google Cloud config problem
+* cookie/session issue
+* redirect allowlist problem
+* backend issue
+
+…but the actual issue was MUCH more subtle:
+⚠️ **Frontend auth state synchronization after OAuth redirect.**
+
+The OAuth login itself was actually succeeding correctly. This proved it:
+```js
+const result = await insforge.auth.getCurrentUser();
+```
+returned the authenticated user successfully.
+
+But `useUser()` was still lagging behind and not updating immediately after the OAuth redirect/session recovery flow.
+
+**So the fix was:**
+1. Let OAuth redirect back to `/login` instead of directly to `/dashboard`
+2. Preserve OAuth URL hash/query while redirecting
+3. Manually recover/check session using: `insforge.auth.getCurrentUser()`
+4. Navigate to dashboard only AFTER session recovery succeeds
+
+**The key realization:**
+OAuth login succeeded. The frontend auth state just wasn’t synchronized yet.
+
+**One more important thing:**
+DO NOT accidentally destroy the OAuth hash/query params too early.
+Example: `/login#access_token=xyz`
+If your router redirects too early and turns it into `/login` before the SDK parses it… the login session can effectively be lost 😭
+At one point during debugging, `useUser()` continued returning `null` even though `getCurrentUser()` successfully returned the authenticated user.
+
+This was honestly one of the most educational auth debugging sessions I’ve had recently.
+Huge learning about:
+* OAuth flows
+* React auth state timing
+* route protection
+* session recovery
+* preserving URL hashes/query params
