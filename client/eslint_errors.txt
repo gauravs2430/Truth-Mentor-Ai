@@ -1,0 +1,91 @@
+
+/Users/ganpati/Desktop/GauravPC/Coding/ai-career-mentor/client/src/App.jsx
+  1:8  error  'React' is defined but never used  no-unused-vars
+
+/Users/ganpati/Desktop/GauravPC/Coding/ai-career-mentor/client/src/pages/Dashboard.jsx
+   1:8   error    'React' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            no-unused-vars
+   8:17  error    'isLoaded' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                no-unused-vars
+  15:7   error    Error: Cannot access variable before it is declared
+
+`fetchRoadmaps` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+  13 |   useEffect(() => {
+  14 |     if (user) {
+> 15 |       fetchRoadmaps();
+     |       ^^^^^^^^^^^^^ `fetchRoadmaps` accessed before it is declared
+  16 |     }
+  17 |   }, [user]);
+  18 |
+
+  17 |   }, [user]);
+  18 |
+> 19 |   const fetchRoadmaps = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 20 |     try {
+     | ^^^^^^^^^
+> 21 |       setLoadingRoadmaps(true);
+     …
+     | ^^^^^^^^^
+> 34 |     }
+     | ^^^^^^^^^
+> 35 |   };
+     | ^^^^^ `fetchRoadmaps` is declared here
+  36 |
+  37 |   const handleLogout = async () => {
+  38 |     await insforge.auth.signOut();  react-hooks/immutability
+  17:6   warning  React Hook useEffect has a missing dependency: 'fetchRoadmaps'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             react-hooks/exhaustive-deps
+
+/Users/ganpati/Desktop/GauravPC/Coding/ai-career-mentor/client/src/pages/GenerateRoadmap.jsx
+   1:8   error  'React' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 no-unused-vars
+  25:7   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  23 |   useEffect(() => {
+  24 |     if (user?.profile) {
+> 25 |       setFormData({
+     |       ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  26 |         current_position: user.profile.current_position || '',
+  27 |         target_role: user.profile.target_role || '',
+  28 |         experience: user.profile.experience || '',  react-hooks/set-state-in-effect
+  97:16  error  'err' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   no-unused-vars
+  98:9   error  There is no `cause` attached to the symptom error being thrown                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    preserve-caught-error
+
+/Users/ganpati/Desktop/GauravPC/Coding/ai-career-mentor/client/src/pages/RoadmapDetail.jsx
+   1:8  error    'React' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        no-unused-vars
+  14:5  error    Error: Cannot access variable before it is declared
+
+`fetchRoadmap` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+  12 |
+  13 |   useEffect(() => {
+> 14 |     fetchRoadmap();
+     |     ^^^^^^^^^^^^ `fetchRoadmap` accessed before it is declared
+  15 |   }, [id]);
+  16 |
+  17 |   const fetchRoadmap = async () => {
+
+  15 |   }, [id]);
+  16 |
+> 17 |   const fetchRoadmap = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 18 |     try {
+     | ^^^^^^^^^
+> 19 |       setLoading(true);
+     …
+     | ^^^^^^^^^
+> 42 |     }
+     | ^^^^^^^^^
+> 43 |   };
+     | ^^^^^ `fetchRoadmap` is declared here
+  44 |
+  45 |   const toggleStepCompletion = async (stepId, currentStatus) => {
+  46 |     try {  react-hooks/immutability
+  15:6  warning  React Hook useEffect has a missing dependency: 'fetchRoadmap'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          react-hooks/exhaustive-deps
+
+✖ 12 problems (10 errors, 2 warnings)
+

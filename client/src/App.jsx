@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { InsforgeProvider, useUser } from '@insforge/react';
 import { insforge } from './lib/insforge';
@@ -6,6 +5,8 @@ import { insforge } from './lib/insforge';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
+import GenerateRoadmap from './pages/GenerateRoadmap';
+import RoadmapDetail from './pages/RoadmapDetail';
 
 // A wrapper to protect routes that require authentication
 const ProtectedRoute = ({ children }) => {
@@ -65,6 +66,16 @@ function App() {
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/roadmap/new" element={
+              <ProtectedRoute>
+                <GenerateRoadmap />
+              </ProtectedRoute>
+            } />
+            <Route path="/roadmap/:id" element={
+              <ProtectedRoute>
+                <RoadmapDetail />
               </ProtectedRoute>
             } />
             

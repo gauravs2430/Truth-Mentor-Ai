@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { insforge } from '../lib/insforge';
 import { Mail, Lock, User, ArrowRight, Loader2, AlertCircle } from 'lucide-react';

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { insforge } from '../lib/insforge';
 import { Mail, Lock, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
@@ -15,7 +15,7 @@ export default function Login() {
     setLoading(true);
     setError(null);
 
-    const { data, error } = await insforge.auth.signInWithPassword({
+    const { error } = await insforge.auth.signInWithPassword({
       email,
       password,
     });
