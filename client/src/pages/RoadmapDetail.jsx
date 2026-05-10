@@ -9,26 +9,55 @@ export default function RoadmapDetail() {
   const [roadmap, setRoadmap] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+
 
   const fetchRoadmap = async () => {
     try {
       setLoading(true);
+
+      const { data: session } = await insforge.auth.getCurrentUser();
+      const loggedInUser = session?.user;
+
+      if (!loggedInUser) {
+        navigate('/login');
+        return;
+      }
+
+      setCurrentUser(loggedInUser);
+
       const { data, error } = await insforge.database
         .from('roadmaps')
         .select(`
-          *,
-          roadmap_steps (*)
-        `)
+        *,
+        roadmap_steps (*)
+      `)
         .eq('id', id)
         .single();
 
       if (error) throw error;
-      
-      // Sort steps by order_index
+
+      const { data: progressRows, error: progressError } = await insforge.database
+        .from('user_progress')
+        .select('*')
+        .eq('user_id', loggedInUser.id);
+
+      if (progressError) throw progressError;
+
+      const progressMap = {};
+      (progressRows || []).forEach((row) => {
+        progressMap[row.step_id] = row.status;
+      });
+
       if (data && data.roadmap_steps) {
         data.roadmap_steps.sort((a, b) => a.order_index - b.order_index);
+
+        data.roadmap_steps = data.roadmap_steps.map((step) => ({
+          ...step,
+          is_completed: progressMap[step.id] === 'completed',
+        }));
       }
-      
+
       setRoadmap(data);
     } catch (err) {
       console.error(err);
@@ -46,23 +75,38 @@ export default function RoadmapDetail() {
 
   const toggleStepCompletion = async (stepId, currentStatus) => {
     try {
+      if (!currentUser) {
+        setError('User session lost. Please login again.');
+        return;
+      }
+
+      const newStatus = currentStatus ? 'not_started' : 'completed';
+
       // Optimistic update
       setRoadmap(prev => ({
         ...prev,
-        roadmap_steps: prev.roadmap_steps.map(step => 
+        roadmap_steps: prev.roadmap_steps.map(step =>
           step.id === stepId ? { ...step, is_completed: !currentStatus } : step
         )
       }));
 
       const { error } = await insforge.database
-        .from('roadmap_steps')
-        .update({ is_completed: !currentStatus })
-        .eq('id', stepId);
+        .from('user_progress')
+        .upsert([
+          {
+            user_id: currentUser.id,
+            step_id: stepId,
+            status: newStatus,
+            completed_at: newStatus === 'completed' ? new Date().toISOString() : null,
+            updated_at: new Date().toISOString(),
+          }
+        ], {
+          onConflict: 'user_id,step_id',
+        });
 
       if (error) throw error;
     } catch (err) {
-      console.error("Failed to update step", err);
-      // Revert on error
+      console.error("Failed to update progress", err);
       fetchRoadmap();
     }
   };
@@ -81,7 +125,7 @@ export default function RoadmapDetail() {
       <div className="min-h-full flex flex-col items-center justify-center text-white p-12">
         <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-8 max-w-md w-full text-center">
           <p className="text-red-400 mb-6">{error || 'Roadmap not found.'}</p>
-          <button 
+          <button
             onClick={() => navigate('/dashboard')}
             className="px-6 py-2 bg-white/10 hover:bg-white/20 rounded-xl transition-colors"
           >
@@ -102,7 +146,7 @@ export default function RoadmapDetail() {
       <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-[#00d4ff] rounded-full blur-[150px] opacity-5 pointer-events-none"></div>
 
       <div className="max-w-4xl mx-auto relative z-10">
-        <button 
+        <button
           onClick={() => navigate('/dashboard')}
           className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-8 group"
         >
@@ -136,7 +180,7 @@ export default function RoadmapDetail() {
               <div className="text-4xl font-black text-[#00d4ff] mb-1">{progress}%</div>
               <div className="text-xs text-gray-400 uppercase tracking-wider font-bold">Completed</div>
               <div className="w-full bg-white/10 h-2 rounded-full mt-3 overflow-hidden">
-                <div 
+                <div
                   className="bg-gradient-to-r from-[#00d4ff] to-[#0099cc] h-full rounded-full transition-all duration-500 ease-out"
                   style={{ width: `${progress}%` }}
                 ></div>
@@ -149,12 +193,12 @@ export default function RoadmapDetail() {
         <div className="space-y-6 relative before:absolute before:inset-0 before:ml-6 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-[#00d4ff]/50 before:via-white/10 before:to-transparent">
           {roadmap.roadmap_steps.map((step, index) => {
             const isCompleted = step.is_completed;
-            
+
             return (
               <div key={step.id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
                 {/* Icon Marker */}
                 <div className="flex items-center justify-center w-12 h-12 rounded-full border-4 border-[#0a0a0a] bg-[#111] absolute left-0 md:left-1/2 -translate-x-1/2 z-10 shrink-0">
-                  <button 
+                  <button
                     onClick={() => toggleStepCompletion(step.id, isCompleted)}
                     className="w-full h-full flex items-center justify-center hover:scale-110 transition-transform"
                   >
@@ -165,7 +209,7 @@ export default function RoadmapDetail() {
                     )}
                   </button>
                 </div>
-                
+
                 {/* Card */}
                 <div className="w-[calc(100%-4rem)] md:w-[calc(50%-3rem)] p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm transition-all hover:bg-white/10 hover:border-white/20 ml-auto md:ml-0 group-hover:-translate-y-1">
                   <div className="flex items-center gap-3 mb-3">
@@ -176,15 +220,15 @@ export default function RoadmapDetail() {
                       {step.title}
                     </h3>
                   </div>
-                  
+
                   {step.resources && step.resources.length > 0 && (
                     <div className="mt-4 space-y-2">
                       <p className="text-sm text-gray-400 font-medium mb-2">Recommended Resources:</p>
                       {step.resources.map((res, i) => (
-                        <a 
-                          key={i} 
-                          href={res.url} 
-                          target="_blank" 
+                        <a
+                          key={i}
+                          href={res.url}
+                          target="_blank"
                           rel="noreferrer"
                           className="flex items-center gap-2 p-3 rounded-xl bg-black/30 border border-white/5 hover:border-[#00d4ff]/30 hover:bg-[#00d4ff]/5 transition-colors text-sm group/link"
                         >

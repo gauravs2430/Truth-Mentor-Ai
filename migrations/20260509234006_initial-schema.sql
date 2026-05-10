@@ -55,14 +55,16 @@ CREATE TABLE IF NOT EXISTS roadmap_steps (
 
 CREATE INDEX IF NOT EXISTS idx_steps_roadmap ON roadmap_steps(roadmap_id);
 
-CREATE TABLE IF NOT EXISTS user_progress (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
-  step_id UUID REFERENCES roadmap_steps(id) ON DELETE CASCADE,
-  status VARCHAR(50) DEFAULT 'not_started',
-  completed_at TIMESTAMPTZ,
-  notes TEXT,
-  UNIQUE(user_id, step_id)
+create table if not exists user_progress (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references profiles(id) on delete cascade,
+  step_id uuid references roadmap_steps(id) on delete cascade,
+  status text default 'pending',
+  completed_at timestamp,
+  created_at timestamp default now(),
+  updated_at timestamp default now(),
+  
+  unique(user_id, step_id)
 );
 
 CREATE TABLE IF NOT EXISTS chat_sessions (
