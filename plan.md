@@ -921,17 +921,15 @@ VITE_API_URL=https://your-backend.railway.app
 
 **Goal:** Auth + Database working. Nothing fancy, just solid.
 
-- [ ] Set up InsForge project and get DB URL
-- [ ] Create all tables using SQL migrations
-- [ ] Set up new Express project with TypeScript
-- [ ] Implement register + login endpoints with JWT
-- [ ] Hash passwords with bcrypt
-- [ ] Add Google OAuth
-- [ ] Build Login and Register pages in React (Vite)
-- [ ] Protect routes — redirect unauthenticated users
-- [ ] Test all auth flows with Postman
+- [x] Set up InsForge project and get DB URL
+- [x] Create all tables using SQL migrations
+- [x] Implement register + login endpoints with JWT *(Handled via InsForge Auth)*
+- [x] Add Google OAuth *(Configured via InsForge)*
+- [x] Build Login and Register pages in React (Vite)
+- [x] Protect routes — redirect unauthenticated users
+- [x] Test all auth flows
 
-**Milestone:** You can sign up, log in, and access a protected page.
+**Milestone:** You can sign up, log in, and access a protected page. ✅
 
 ---
 
@@ -939,15 +937,15 @@ VITE_API_URL=https://your-backend.railway.app
 
 **Goal:** Roadmap generation with saving and history.
 
-- [ ] Build the roadmap generation endpoint
-- [ ] Use context-rich prompting (pull user skills from DB)
-- [ ] Parse structured JSON from Gemini response
-- [ ] Save roadmap + steps to PostgreSQL
-- [ ] Build Roadmap History page
-- [ ] Build Roadmap View page (stepper/timeline UI)
-- [ ] Implement progress tracking (checkboxes → DB)
+- [x] Build the roadmap generation logic
+- [x] Use context-rich prompting (pull user skills from DB)
+- [x] Parse structured JSON from Gemini / Claude response
+- [x] Save roadmap + steps to PostgreSQL
+- [x] Build Roadmap History page (Dashboard view)
+- [x] Build Roadmap View page (stepper/timeline UI)
+- [x] Implement progress tracking (checkboxes → DB)
 
-**Milestone:** User can generate a personalized roadmap, see it visually, and track progress.
+**Milestone:** User can generate a personalized roadmap, see it visually, and track progress. ✅
 
 ---
 
