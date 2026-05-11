@@ -10,40 +10,54 @@ export default function Sidebar() {
   const location = useLocation();
   const [roadmaps, setRoadmaps] = useState([]);
   const [sessions, setSessions] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    if (user) {
-      const fetchSidebarData = async () => {
-        try {
-          // Fetch Roadmaps
-          const { data: roadmapData, error: roadmapError } = await insforge.database
-            .from('roadmaps')
-            .select('id, title')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false });
-            
-          if (!roadmapError && roadmapData) {
-            setRoadmaps(roadmapData);
-          }
+  const fetchSidebarData = async () => {
+    try {
+      const { data: session } = await insforge.auth.getCurrentUser();
+      const currentUser = session?.user;
+      setCurrentUser(currentUser);
 
-          // Fetch Chat Sessions
-          const { data: sessionData, error: sessionError } = await insforge.database
-            .from('chat_sessions')
-            .select('id, title')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false });
+      if (!currentUser) {
+        console.log("No current user found for sidebar");
+        return;
+      }
 
-          if (!sessionError && sessionData) {
-            setSessions(sessionData);
-          }
-        } catch (err) {
-          console.error("Failed to fetch sidebar data", err);
-        }
-      };
-      
-      fetchSidebarData();
+      console.log("Sidebar user:", currentUser);
+
+      const { data: roadmapData, error: roadmapError } = await insforge.database
+        .from('roadmaps')
+        .select('id, title, created_at')
+        .eq('user_id', currentUser.id)
+        .order('created_at', { ascending: false });
+
+      console.log("Sidebar roadmaps:", roadmapData);
+      console.log("Sidebar roadmap error:", roadmapError);
+
+      if (!roadmapError) {
+        setRoadmaps(roadmapData || []);
+      }
+
+      const { data: sessionData, error: sessionError } = await insforge.database
+        .from('chat_sessions')
+        .select('id, title, created_at')
+        .eq('user_id', currentUser.id)
+        .order('created_at', { ascending: false });
+
+      console.log("Sidebar chats:", sessionData);
+      console.log("Sidebar chat error:", sessionError);
+
+      if (!sessionError) {
+        setSessions(sessionData || []);
+      }
+    } catch (err) {
+      console.error("Failed to fetch sidebar data", err);
     }
-  }, [user, location.pathname]);
+  };
+
+  fetchSidebarData();
+}, [location.pathname]);
 
   const handleLogout = async () => {
     await insforge.auth.signOut();
@@ -172,10 +186,10 @@ export default function Sidebar() {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium truncate text-white">
-              {user?.profile?.full_name || 'User'}
+              {currentUser?.profile?.full_name || currentUser?.email || 'User'}
             </p>
             <p className="text-xs text-gray-500 truncate">
-              {user?.email}
+              {currentUser?.email}
             </p>
           </div>
           

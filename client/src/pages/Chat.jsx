@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useUser } from '@insforge/react';
 import { insforge } from '../lib/insforge';
-import { Send, Loader2, User, Sparkles, AlertCircle, Trash2 } from 'lucide-react';
+import { MessageSquare, Send, Loader2, User, Sparkles, AlertCircle, Trash2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
 const HONEST_MENTOR_SYSTEM_PROMPT = `
